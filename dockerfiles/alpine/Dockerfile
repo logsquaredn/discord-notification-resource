@@ -16,9 +16,7 @@ RUN set -e; for pkg in $(go list ./...); do \
 	done
 
 FROM alpine:edge AS resource
-RUN apk update && \\
-	apk add ca-certificates && \\
-	rm -rf /var/cache/apk/*
+RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 COPY --from=builder assets/ opt/resource/
 RUN chmod +x /opt/resource/*
 
