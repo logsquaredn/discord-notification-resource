@@ -19,16 +19,14 @@ FROM ubuntu:bionic AS resource
 ENV DEBAIN_FRONTEND=noninteractive
 RUN apt-get update
 COPY --from=builder assets/ opt/resource/
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 RUN chmod +x /opt/resource/*
 
 FROM resource AS tests
 COPY --from=builder /tests /tests
 
-ARG JENKINS_URL
-ARG JENKINS_JOB
-ARG JENKINS_JOB_TOKEN
-ARG JENKINS_USERNAME
-ARG JENKINS_API_TOKEN
+ARG WEBHOOK_ID
+ARG WEBHOOK_TOKEN
 
 RUN set -e; for test in /tests/*.test; do \
 		$test -ginkgo.v; \
