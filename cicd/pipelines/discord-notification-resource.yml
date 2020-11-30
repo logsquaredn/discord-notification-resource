@@ -127,7 +127,10 @@ jobs:
         - put: version
           params:
             bump: patch
-        
+
+        - put: discord-notification-resource-test
+          params:
+            content: new version successful
     plan:
       - in_parallel:
         - get: discord-notification-resource
@@ -149,7 +152,3 @@ jobs:
             build_args: *build_args
           get_params:
             skip_download: true
-
-        - put: discord-notification-resource-test
-          params:
-            content: new version successful
