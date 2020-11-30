@@ -12,9 +12,12 @@ type Version struct {
 type OutRequest struct {
 	Source Source                  `json:"source"`
 	Params godiscord.WebhookParams `json:"params"`
-	GetParams struct {
-		Wait bool				   `json:"wait"`
-	}							   `json:"get_params"`
+	GetParams 					   `json:"get_params"`
+}
+
+// GetParams ...
+type GetParams struct {
+	Wait bool `json:"wait"`
 }
 
 // OutResponse is the JSON object that we pass back to Concourse through stdout from /opt/resource/out
