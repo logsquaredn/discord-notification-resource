@@ -1,4 +1,4 @@
-resource_type:
+resource_types:
   - name: discord-notification-resource
     type: registry-image
     source:
