@@ -25,7 +25,7 @@ func (r *DiscordNotificationResource) Out() error {
 		return fmt.Errorf("could not marshal JSON: %s", err)
 	}
 
-	s, err := godiscord.New()
+	s, err := godiscord.New(req.Source.Token)
 	if err != nil {
 		return err
 	}

@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	os.Stdout.Write([]byte("{}"))
+	os.Stdout.Write([]byte("[]"))
 }
