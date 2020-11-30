@@ -22,7 +22,7 @@ jobs:
   - name: some-job
     plan:
       ...
-      - put: my-jenkins-job
+      - put: notify
         params:
           ...
 ```
@@ -31,10 +31,12 @@ jobs:
 
 | Parameter    | Required | Description                                                  |
 | ------------ | -------- | ------------------------------------------------------------ |
-| `webhook_id` | yes      | the id of the webhook to post to _see below (1)_             |
-| `token`      | no       | the token to use to authenticate when posting to the webhook |
+| `webhook_id` | yes      | the id of the webhook to post to _see below (1)_                             |
+| `token`      | yes      | the token to use to authenticate when posting to the webhook _see below (2)_ |
 
-> _(1)_ `webhook_id` _will be the path parameter at the end of the url copied from the_ `Copy Webhook URL` _button below_
+> _(1)_ `webhook_id` _will be the second to last path parameter in the url copied from the_ `Copy Webhook URL` _button below_
+
+> _(2)_ `token` _will be the last path parameter in the url copied from the_ `Copy Webhook URL` _button below_
 
 ![webhook-id](https://user-images.githubusercontent.com/60495614/100556635-a8d29b80-3271-11eb-8b46-798d5ccc8e4e.png)
 
