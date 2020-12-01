@@ -82,6 +82,66 @@ func (r *DiscordNotificationResource) getSrc() (string, error) {
 	return r.args[1], nil
 }
 
+func (r *DiscordNotificationResource) getContent(p *resource.PutParams) (string, error) {
+	if p.ContentFile != "" {
+		src, err := r.getSrc()
+		if err != nil {
+			return "", err
+		}
+
+		b, err := ioutil.ReadFile(filepath.Join(src, p.ContentFile))
+		if err != nil {
+			return "", err
+		}
+
+		return r.expandEnv(string(b)), nil
+	} else if p.Content != "" {
+		return r.expandEnv(p.Content), nil
+	}
+
+	return "", nil
+}
+
+func (r *DiscordNotificationResource) getAvatarURL(p *resource.PutParams) (string, error) {
+	if p.AvatarURLFile != "" {
+		src, err := r.getSrc()
+		if err != nil {
+			return "", err
+		}
+
+		b, err := ioutil.ReadFile(filepath.Join(src, p.AvatarURLFile))
+		if err != nil {
+			return "", err
+		}
+
+		return r.expandEnv(string(b)), nil
+	} else if p.AvatarURL != "" {
+		return r.expandEnv(p.AvatarURL), nil
+	}
+
+	return "", nil
+}
+
+func (r *DiscordNotificationResource) getUsername(p *resource.PutParams) (string, error) {
+	if p.UsernameFile != "" {
+		src, err := r.getSrc()
+		if err != nil {
+			return "", err
+		}
+
+		b, err := ioutil.ReadFile(filepath.Join(src, p.UsernameFile))
+		if err != nil {
+			return "", err
+		}
+
+		return r.expandEnv(string(b)), nil
+	} else if p.Username != "" {
+		return r.expandEnv(p.Username), nil
+	}
+
+	return "", nil
+}
+
 func (r *DiscordNotificationResource) writeMetadata(mds []resource.Metadata) error {
 	src, err := r.getSrc()
 	if err != nil {

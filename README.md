@@ -54,6 +54,9 @@ not implemented
 
 see [discordgo.WebhookParams](https://godoc.org/github.com/bwmarrin/discordgo#WebhookParams). Addtionally:
 
-| Parameter | Required | Description                                                                                          |
-| --------- | -------- | ---------------------------------------------------------------------------------------------------- |
-| `wait`    | no       | whether or not to wait on the response and gather version and metadata info from it. Default `false` |
+| Parameter         | Required | Description                                                                                          |
+| ----------------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `wait`            | no       | whether or not to wait on the response and gather version and metadata info from it. Default `false` |
+| `content_file`    | no       | path to a file containing the content of the message. Overrides `content`                            |
+| `username_file`   | no       | path to a file containing the username for the message. Overrides `username`                         |
+| `avatar_url_file` | no       | path to a file containing the url of the avatar for the message. Overrides `avatar_url`              |

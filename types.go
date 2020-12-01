@@ -15,9 +15,12 @@ type OutRequest struct {
 	Params PutParams `json:"params"`
 }
 
-// PutParams ...
+// PutParams are additional parameters that can be passed to this Concourse Resource Type during a put step
 type PutParams struct {
 	discordgo.WebhookParams
+	ContentFile string `json:"content_file,omitempty"`
+	UsernameFile string `json:"username_file,omitempty"`
+	AvatarURLFile string `json:"avatar_url_file,omitempty"`
 	Wait bool `json:"wait,omitempty"`
 }
 

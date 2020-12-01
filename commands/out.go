@@ -36,14 +36,29 @@ func (r *DiscordNotificationResource) Out() error {
 		},
 	}
 
+	content, err := r.getContent(&req.Params)
+	if err != nil {
+		return err
+	}
+
+	username, err := r.getUsername(&req.Params)
+	if err != nil {
+		return err
+	}
+
+	avatarURL, err := r.getAvatarURL(&req.Params)
+	if err != nil {
+		return err
+	}
+
 	msg, err := s.WebhookExecute(
 		req.Source.WebhookID,
 		req.Source.Token,
 		req.Params.Wait,
 		&discordgo.WebhookParams{
-			Content: req.Params.Content,
-			Username: req.Params.Username,
-			AvatarURL: req.Params.AvatarURL,
+			Content: content,
+			Username: username,
+			AvatarURL: avatarURL,
 			TTS: req.Params.TTS,
 			File: req.Params.File,
 			Embeds: req.Params.Embeds,
