@@ -54,6 +54,6 @@ not implemented
 
 see [discordgo.WebhookParams](https://godoc.org/github.com/bwmarrin/discordgo#WebhookParams). Addtionally:
 
-| Parameter    | Required | Description                        |
-| ------------ | -------- | ---------------------------------- |
-| `get_params` | no       | `{ "wait": bool }` Default `false` |
+| Parameter | Required | Description                                                                         |
+| --------- | -------- | ----------------------------------------------------------------------------------- |
+| `wait`    | no       | whether or not to wait on the response and gather version and metadata info from it |

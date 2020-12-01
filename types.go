@@ -1,8 +1,9 @@
 package resource
 
 import (
-	godiscord "github.com/bwmarrin/discordgo"
+	discordgo "github.com/bwmarrin/discordgo"
 )
+
 // Version is the JSON object that is passed to and from Concourse
 type Version struct {
 	Message string `json:"message"`
@@ -10,13 +11,13 @@ type Version struct {
 
 // OutRequest is the JSON object that Concourse passes to /opt/resource/out through stdin
 type OutRequest struct {
-	Source Source                  `json:"source"`
-	Params godiscord.WebhookParams `json:"params"`
-	GetParams 					   `json:"get_params"`
+	Source Source    `json:"source"`
+	Params PutParams `json:"params"`
 }
 
-// GetParams ...
-type GetParams struct {
+// PutParams ...
+type PutParams struct {
+	discordgo.WebhookParams
 	Wait bool `json:"wait"`
 }
 
@@ -29,7 +30,7 @@ type OutResponse struct {
 // Source is the JSON (yaml) object configured under the resources array in a Concourse pipeline
 type Source struct {
 	WebhookID string `json:"webhook_id"`
-	Token string     `json:"token"`
+	Token     string `json:"token"`
 }
 
 // Metadata is the object which is passed in array form to Concourse through stdout from /opt/resource/out and /opt/resource/in

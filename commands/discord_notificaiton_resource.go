@@ -4,13 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 
-	godiscord "github.com/bwmarrin/discordgo"
+	discordgo "github.com/bwmarrin/discordgo"
 	resource "github.com/logsquaredn/discord-notification-resource"
 )
 
-// DiscordNotificationResource ...
+// DiscordNotificationResource struct which has the Check, In, and Out methods on it which comprise
+// the three scripts needed to implement a Concourse Resource Type
 type DiscordNotificationResource struct {
 	stdin  io.Reader
 	stderr io.Writer
@@ -18,12 +21,12 @@ type DiscordNotificationResource struct {
 	args   []string
 }
 
-// NewDiscordNotificationResource ...
+// NewDiscordNotificationResource creates a new DiscordNotificationResource struct
 func NewDiscordNotificationResource(
-	stdin  io.Reader,
+	stdin io.Reader,
 	stderr io.Writer,
 	stdout io.Writer,
-	args   []string,
+	args []string,
 ) *DiscordNotificationResource {
 	return &DiscordNotificationResource{
 		stdin,
@@ -53,15 +56,51 @@ func (r *DiscordNotificationResource) writeOutput(resp interface{}) error {
 	return nil
 }
 
-
-func (r *DiscordNotificationResource) getMetadata(msg *godiscord.Message) []resource.Metadata {
+func (r *DiscordNotificationResource) getMetadata(msg *discordgo.Message) ([]resource.Metadata, error) {
 	if msg != nil {
-		return []resource.Metadata{
+		timestamp, err := msg.Timestamp.Parse()
+		if err != nil {
+			return nil, err
+		}
 
+		return []resource.Metadata{
+			{Name: "channelId", Value:msg.ChannelID},
+			{Name: "content", Value:msg.Content},
+			{Name: "guildId", Value:msg.GuildID},
+			{Name: "webhookId", Value:msg.WebhookID},
+			{Name: "timestamp", Value:timestamp.String()},
+		}, nil
+	}
+
+	return nil, fmt.Errorf("returned message was nil")
+}
+
+func (r *DiscordNotificationResource) getSrc() (string, error) {
+	if len(r.args) < 2 {
+		return "", fmt.Errorf("destination path not specified")
+	}
+	return r.args[1], nil
+}
+
+func (r *DiscordNotificationResource) writeMetadata(mds []resource.Metadata) error {
+	src, err := r.getSrc()
+	if err != nil {
+		return err
+	}
+
+	err = os.MkdirAll(filepath.Join(src, ".metadata"), 0755)
+	if err != nil {
+		return fmt.Errorf("unable to make directory %s", src)
+	}
+
+	for _, md := range mds {
+		err = ioutil.WriteFile(filepath.Join(src, ".metadata", md.Name), []byte(md.Value), 0644)
+		if err != nil {
+			return err
 		}
 	}
 
-	return []resource.Metadata{}
+	return nil
 }
 
 func (r *DiscordNotificationResource) expandEnv(s string) string {

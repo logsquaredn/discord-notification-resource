@@ -5,16 +5,17 @@ import (
 	"fmt"
 	"net/http"
 
-	godiscord "github.com/bwmarrin/discordgo"
+	discordgo "github.com/bwmarrin/discordgo"
 
 	resource "github.com/logsquaredn/discord-notification-resource"
 )
 
-// Out ...
+// Out runs the in script which checks stdin for a JSON object of the form of an OutRequest,
+// sends a new message and then, if wait was set to true, fetches and writes it as well as Metadata about it to stdout
 func (r *DiscordNotificationResource) Out() error {
 	var (
-		req resource.OutRequest
-		resp resource.OutResponse
+		req  		  resource.OutRequest
+		resp 		  resource.OutResponse
 	)
 
 	err := r.readInput(&req)
@@ -22,7 +23,7 @@ func (r *DiscordNotificationResource) Out() error {
 		return fmt.Errorf("could not marshal JSON: %s", err)
 	}
 
-	s, err := godiscord.New(req.Source.Token)
+	s, err := discordgo.New(req.Source.Token)
 	if err != nil {
 		return err
 	}
@@ -30,7 +31,7 @@ func (r *DiscordNotificationResource) Out() error {
 	s.Client = &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify : true,
+				InsecureSkipVerify: true,
 			},
 		},
 	}
@@ -38,16 +39,27 @@ func (r *DiscordNotificationResource) Out() error {
 	msg, err := s.WebhookExecute(
 		req.Source.WebhookID,
 		req.Source.Token,
-		req.GetParams.Wait,
-		&req.Params,
+		req.Params.Wait,
+		&discordgo.WebhookParams{
+			Content: req.Params.Content,
+			Username: req.Params.Username,
+			AvatarURL: req.Params.AvatarURL,
+			TTS: req.Params.TTS,
+			File: req.Params.File,
+			Embeds: req.Params.Embeds,
+			AllowedMentions: req.Params.AllowedMentions,
+		},
 	)
 	if err != nil {
 		return err
 	}
 
-	if req.GetParams.Wait {
+	if req.Params.Wait {
 		resp.Version.Message = msg.ID
-		resp.Metadata = r.getMetadata(msg)
+		resp.Metadata, err = r.getMetadata(msg)
+		if err != nil {
+			return err
+		}
 	}
 
 	r.writeOutput(&resp)
