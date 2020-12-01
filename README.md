@@ -29,8 +29,8 @@ jobs:
 
 ## Source Configuration
 
-| Parameter    | Required | Description                                                  |
-| ------------ | -------- | ------------------------------------------------------------ |
+| Parameter    | Required | Description                                                                  |
+| ------------ | -------- | ---------------------------------------------------------------------------- |
 | `webhook_id` | yes      | the id of the webhook to post to _see below (1)_                             |
 | `token`      | yes      | the token to use to authenticate when posting to the webhook _see below (2)_ |
 
@@ -54,6 +54,6 @@ not implemented
 
 see [discordgo.WebhookParams](https://godoc.org/github.com/bwmarrin/discordgo#WebhookParams). Addtionally:
 
-| Parameter | Required | Description                                                                         |
-| --------- | -------- | ----------------------------------------------------------------------------------- |
-| `wait`    | no       | whether or not to wait on the response and gather version and metadata info from it |
+| Parameter | Required | Description                                                                                          |
+| --------- | -------- | ---------------------------------------------------------------------------------------------------- |
+| `wait`    | no       | whether or not to wait on the response and gather version and metadata info from it. Default `false` |

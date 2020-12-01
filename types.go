@@ -18,7 +18,7 @@ type OutRequest struct {
 // PutParams ...
 type PutParams struct {
 	discordgo.WebhookParams
-	Wait bool `json:"wait"`
+	Wait bool `json:"wait,omitempty"`
 }
 
 // OutResponse is the JSON object that we pass back to Concourse through stdout from /opt/resource/out
