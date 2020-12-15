@@ -113,7 +113,7 @@ jobs:
 
         - put: discord-notification-resource-test
           params:
-            content: new version successful
+            content: discord notification resource; new version successful
     plan:
       - in_parallel:
         - get: discord-notification-resource
