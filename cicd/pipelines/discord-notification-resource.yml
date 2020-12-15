@@ -9,7 +9,7 @@ resources:
   - name: discord-notification-resource
     type: git
     icon: github
-    check_every: 30m
+    check_every: 2m
     source:
       uri: https://github.com/logsquaredn/discord-notification-resource/
       branch: master
@@ -17,7 +17,7 @@ resources:
   - name: discord-notification-resource-image-alpine
     type: docker-image
     icon: docker
-    check_every: 1h
+    check_every: 9999h
     source: 
       username: ((docker_username))
       password: ((docker_password))
@@ -27,7 +27,7 @@ resources:
   - name: discord-notification-resource-image-ubuntu
     type: docker-image
     icon: docker
-    check_every: 1h
+    check_every: 9999h
     source:
       username: ((docker_username))
       password: ((docker_password))
@@ -113,7 +113,8 @@ jobs:
 
         - put: discord-notification-resource-test
           params:
-            content: discord notification resource; new version successful
+            content: discord-notification-resource; new version successful
+            wait: true
     plan:
       - in_parallel:
         - get: discord-notification-resource
@@ -122,16 +123,15 @@ jobs:
 
         - get: version
 
-      - in_parallel:
-        - put: discord-notification-resource-image-ubuntu
-          params:
-            build: discord-notification-resource/
-            tag_as_latest: true
-            cache: true
-            dockerfile: discord-notification-resource/dockerfiles/ubuntu/Dockerfile
-            tag_file: version/version
-            tag_prefix: ubuntu-
-            additional_tags: discord-notification-resource/dockerfiles/ubuntu/additional_tags
-            build_args: *build_args
-          get_params:
-            skip_download: true
+      - put: discord-notification-resource-image-ubuntu
+        params:
+          build: discord-notification-resource/
+          tag_as_latest: true
+          cache: true
+          dockerfile: discord-notification-resource/dockerfiles/ubuntu/Dockerfile
+          tag_file: version/version
+          tag_prefix: ubuntu-
+          additional_tags: discord-notification-resource/dockerfiles/ubuntu/additional_tags
+          build_args: *build_args
+        get_params:
+          skip_download: true
