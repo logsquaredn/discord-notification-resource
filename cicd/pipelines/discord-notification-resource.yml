@@ -153,12 +153,10 @@ jobs:
     - get: discord-notification-resource-image-alpine
       passed:
       - build-discord-notification-resource-image-alpine
-      - build-discord-notification-resource-image-ubuntu
       trigger: true
 
     - get: discord-notification-resource-image-ubuntu
       passed:
-      - build-discord-notification-resource-image-alpine
       - build-discord-notification-resource-image-ubuntu
       trigger: true
 
