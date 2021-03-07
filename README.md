@@ -6,25 +6,25 @@ A Concourse resource for webhook notifications in Discord.  Written in Go.
 
 ```yaml
 resource_types:
-  - name: discord-notification-resource
-    type: registry-image
-    source:
-      repository: logsquaredn/discord-notification-resource
-      tag: latest
+- name: discord-notification-resource
+  type: registry-image
+  source:
+    repository: logsquaredn/discord-notification-resource
+    tag: latest
 
 resources:
-  - name: notify
-    type: discord-notification-resource
-    source:
-      ...
+- name: notify
+  type: discord-notification-resource
+  source:
+    ...
 
 jobs:
-  - name: some-job
-    plan:
+- name: some-job
+  plan:
+  ...
+  - put: notify
+    params:
       ...
-      - put: notify
-        params:
-          ...
 ```
 
 ## Source Configuration
