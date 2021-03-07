@@ -1,137 +1,172 @@
 resource_types:
-  - name: discord-notification-resource
-    type: registry-image
-    source:
-      repository: logsquaredn/discord-notification-resource
-      tag: latest
+- name: discord-notification-resource
+  type: registry-image
+  source:
+    repository: logsquaredn/discord-notification-resource
+    tag: latest
 
 resources:
-  - name: discord-notification-resource
-    type: git
-    icon: github
-    check_every: 2m
-    source:
-      uri: https://github.com/logsquaredn/discord-notification-resource/
-      branch: master
+- name: discord-notification-resource
+  type: git
+  icon: github
+  check_every: 2m
+  source:
+    uri: https://github.com/logsquaredn/discord-notification-resource/
+    branch: main
 
-  - name: discord-notification-resource-image-alpine
-    type: docker-image
-    icon: docker
-    check_every: 9999h
-    source: 
-      username: ((docker_username))
-      password: ((docker_password))
-      repository: logsquaredn/discord-notification-resource
-      tag: alpine
+- name: discord-notification-resource-image-alpine
+  type: docker-image
+  icon: docker
+  check_every: 9999h
+  source: 
+    username: ((docker_username))
+    password: ((docker_password))
+    repository: logsquaredn/discord-notification-resource
+    tag: alpine
 
-  - name: discord-notification-resource-image-ubuntu
-    type: docker-image
-    icon: docker
-    check_every: 9999h
-    source:
-      username: ((docker_username))
-      password: ((docker_password))
-      repository: logsquaredn/discord-notification-resource
+- name: discord-notification-resource-image-ubuntu
+  type: docker-image
+  icon: docker
+  check_every: 9999h
+  source:
+    username: ((docker_username))
+    password: ((docker_password))
+    repository: logsquaredn/discord-notification-resource
 
-  - name: discord-notification-resource-test
-    type: discord-notification-resource
-    icon: test-tube
-    check_every: 9999h
-    source:
-      webhook_id: ((discord_webhook_id))
-      token: ((discord_webhook_token))
+- name: discord-notification-resource-test
+  type: discord-notification-resource
+  icon: test-tube
+  check_every: 9999h
+  source:
+    webhook_id: ((discord_webhook_id))
+    token: ((discord_webhook_token))
 
-  - name: version
-    type: semver
-    icon: tag
-    check_every: 9999h
-    source:
-      initial_version: 0.0.1
-      driver: s3
-      bucket: resource-types
-      key: discord-notification-resource/version
-      access_key_id: ((s3_access_key_id))
-      secret_access_key: ((s3_secret_access_key))
-      region_name: us-east-2
+- name: version
+  type: semver
+  icon: tag
+  check_every: 9999h
+  source:
+    initial_version: 0.0.1
+    driver: s3
+    bucket: resource-types
+    key: discord-notification-resource/version
+    access_key_id: ((s3_access_key_id))
+    secret_access_key: ((s3_secret_access_key))
+    region_name: us-east-2
 
 
 anchors:
-  - &default_job_config
-    build_log_retention:
-      builds: 12
-      minimum_succeeded_builds: 3
-    serial: true
+- &default_job_config
+  build_log_retention:
+    builds: 12
+    minimum_succeeded_builds: 3
+  serial: true
 
-  - &build_args
-    WEBHOOK_ID: ((discord_webhook_id))
-    WEBHOOK_TOKEN: ((discord_webhook_token))
+- &build_args
+  WEBHOOK_ID: ((discord_webhook_id))
+  WEBHOOK_TOKEN: ((discord_webhook_token))
 
 
+
+groups:
+- name: build-resource
+  jobs:
+  - build-discord-notification-resource-image-ubuntu
+  - build-discord-notification-resource-image-alpine
+
+- name: all
+  jobs:
+  - update-pipeline
+  - build-discord-notification-resource-image-ubuntu
+  - build-discord-notification-resource-image-alpine
+  - bump-version
 
 jobs:
-  - name: update-pipeline
-    <<: *default_job_config
-    plan:
-      - get: discord-notification-resource
-        trigger: true
+- name: update-pipeline
+  <<: *default_job_config
+  plan:
+  - get: discord-notification-resource
+    trigger: true
 
-      - set_pipeline: self
-        file: discord-notification-resource/cicd/pipelines/discord-notification-resource.yml
-
-
-  - name: build-discord-notification-resource-image-alpine
-    <<: *default_job_config
-    plan:
-      - in_parallel:
-        - get: discord-notification-resource
-          passed: [update-pipeline]
-          trigger: true
-
-        - get: version
-
-      - put: discord-notification-resource-image-alpine
-        params:
-          build: discord-notification-resource/
-          tag_as_latest: false
-          cache: true
-          dockerfile: discord-notification-resource/dockerfiles/alpine/Dockerfile
-          tag_file: version/version
-          tag_prefix: alpine-
-          additional_tags: discord-notification-resource/dockerfiles/alpine/additional_tags
-          build_args: *build_args
-        get_params:
-          skip_download: true
+  - set_pipeline: self
+    file: discord-notification-resource/cicd/pipelines/discord-notification-resource.yml
 
 
-  - name: build-discord-notification-resource-image-ubuntu
-    <<: *default_job_config
-    on_success:
-      in_parallel:
-        - put: version
-          params:
-            bump: patch
+- name: build-discord-notification-resource-image-alpine
+  <<: *default_job_config
+  plan:
+  - in_parallel:
+    - get: discord-notification-resource
+      passed:
+      - update-pipeline
+      trigger: true
 
-        - put: discord-notification-resource-test
-          params:
-            content: discord-notification-resource; new version successful
-            wait: true
-    plan:
-      - in_parallel:
-        - get: discord-notification-resource
-          passed: [update-pipeline]
-          trigger: true
+    - get: version
 
-        - get: version
+  - put: discord-notification-resource-image-alpine
+    params:
+      build: discord-notification-resource/
+      tag_as_latest: false
+      cache: true
+      dockerfile: discord-notification-resource/dockerfiles/alpine/Dockerfile
+      tag_file: version/version
+      tag_prefix: alpine-
+      additional_tags: discord-notification-resource/dockerfiles/alpine/additional_tags
+      build_args: *build_args
+    get_params:
+      skip_download: true
 
-      - put: discord-notification-resource-image-ubuntu
-        params:
-          build: discord-notification-resource/
-          tag_as_latest: true
-          cache: true
-          dockerfile: discord-notification-resource/dockerfiles/ubuntu/Dockerfile
-          tag_file: version/version
-          tag_prefix: ubuntu-
-          additional_tags: discord-notification-resource/dockerfiles/ubuntu/additional_tags
-          build_args: *build_args
-        get_params:
-          skip_download: true
+
+- name: build-discord-notification-resource-image-ubuntu
+  <<: *default_job_config
+  plan:
+  - in_parallel:
+    - get: discord-notification-resource
+      passed: [update-pipeline]
+      trigger: true
+
+    - get: version
+
+  - put: discord-notification-resource-image-ubuntu
+    params:
+      build: discord-notification-resource/
+      tag_as_latest: true
+      cache: true
+      dockerfile: discord-notification-resource/dockerfiles/ubuntu/Dockerfile
+      tag_file: version/version
+      tag_prefix: ubuntu-
+      additional_tags: discord-notification-resource/dockerfiles/ubuntu/additional_tags
+      build_args: *build_args
+    get_params:
+      skip_download: true
+
+- name: bump-version
+  <<: *default_job_config
+  plan:
+  - in_parallel:
+    - get: version
+      passed:
+      - build-discord-notification-resource-image-alpine
+      - build-discord-notification-resource-image-ubuntu
+      trigger: true
+
+    - get: discord-notification-resource-image-alpine
+      passed:
+      - build-discord-notification-resource-image-alpine
+      - build-discord-notification-resource-image-ubuntu
+      trigger: true
+
+    - get: discord-notification-resource-image-ubuntu
+      passed:
+      - build-discord-notification-resource-image-alpine
+      - build-discord-notification-resource-image-ubuntu
+      trigger: true
+
+  - in_parallel:
+    - put: version
+      params:
+        bump: patch
+    
+    - put: notify
+      params:
+        content: jenkins-job-resource; new version successful

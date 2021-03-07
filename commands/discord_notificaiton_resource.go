@@ -122,6 +122,22 @@ func (r *DiscordNotificationResource) getAvatarURL(p *resource.PutParams) (strin
 	return "", nil
 }
 
+func (r *DiscordNotificationResource) getEmbeds(p *resource.PutParams) ([]*discordgo.MessageEmbed, error) {
+	for _, e := range p.Embeds {
+		e.Author.Name = r.expandEnv(e.Author.Name)
+		e.Description = r.expandEnv(e.Description)
+		e.Title = r.expandEnv(e.Title)
+	}
+
+	// ...expandEnv on:
+	// req.params.Embeds.{URL,Title,Description},
+	// req.params.Embeds.Footer.Text,
+	// req.params.Embeds.Provider.* and
+	// req.params.Embeds.Fields.{Name,Value}
+
+	return p.Embeds, nil
+}
+
 func (r *DiscordNotificationResource) getUsername(p *resource.PutParams) (string, error) {
 	if p.UsernameFile != "" {
 		src, err := r.getSrc()

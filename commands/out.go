@@ -14,8 +14,8 @@ import (
 // sends a new message and then, if wait was set to true, fetches and writes it as well as Metadata about it to stdout
 func (r *DiscordNotificationResource) Out() error {
 	var (
-		req  		  resource.OutRequest
-		resp 		  resource.OutResponse
+		req  resource.OutRequest
+		resp resource.OutResponse
 	)
 
 	err := r.readInput(&req)
@@ -51,6 +51,11 @@ func (r *DiscordNotificationResource) Out() error {
 		return err
 	}
 
+	embeds, err := r.getEmbeds(&req.Params)
+	if err != nil {
+		return err
+	}
+
 	msg, err := s.WebhookExecute(
 		req.Source.WebhookID,
 		req.Source.Token,
@@ -61,7 +66,7 @@ func (r *DiscordNotificationResource) Out() error {
 			AvatarURL: avatarURL,
 			TTS: req.Params.TTS,
 			File: req.Params.File,
-			Embeds: req.Params.Embeds,
+			Embeds: embeds,
 			AllowedMentions: req.Params.AllowedMentions,
 		},
 	)
