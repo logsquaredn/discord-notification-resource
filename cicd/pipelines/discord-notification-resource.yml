@@ -165,6 +165,6 @@ jobs:
       params:
         bump: patch
     
-    - put: notify
+    - put: discord-notification-resource-test
       params:
-        content: jenkins-job-resource; new version successful
+        content: discord-notification-resource; new version successful
