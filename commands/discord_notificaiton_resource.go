@@ -64,11 +64,11 @@ func (r *DiscordNotificationResource) getMetadata(msg *discordgo.Message) ([]res
 		}
 
 		return []resource.Metadata{
-			{Name: "channelId", Value:msg.ChannelID},
-			{Name: "content", Value:msg.Content},
-			{Name: "guildId", Value:msg.GuildID},
-			{Name: "webhookId", Value:msg.WebhookID},
-			{Name: "timestamp", Value:timestamp.String()},
+			{Name: "channelId", Value: msg.ChannelID},
+			{Name: "content", Value: msg.Content},
+			{Name: "guildId", Value: msg.GuildID},
+			{Name: "webhookId", Value: msg.WebhookID},
+			{Name: "timestamp", Value: timestamp.String()},
 		}, nil
 	}
 
