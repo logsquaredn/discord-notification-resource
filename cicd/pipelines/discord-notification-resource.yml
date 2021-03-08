@@ -107,7 +107,6 @@ jobs:
     params:
       build: discord-notification-resource/
       tag_as_latest: false
-      cache: true
       dockerfile: discord-notification-resource/dockerfiles/alpine/Dockerfile
       tag_file: version/version
       tag_prefix: alpine-
@@ -130,8 +129,7 @@ jobs:
   - put: discord-notification-resource-image-ubuntu
     params:
       build: discord-notification-resource/
-      tag_as_latest: true
-      cache: true
+      tag_as_latest: true]
       dockerfile: discord-notification-resource/dockerfiles/ubuntu/Dockerfile
       tag_file: version/version
       tag_prefix: ubuntu-
