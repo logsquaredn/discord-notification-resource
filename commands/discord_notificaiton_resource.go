@@ -127,19 +127,29 @@ func (r *DiscordNotificationResource) getEmbeds(p *resource.PutParams) ([]*disco
 		e.URL = r.expandEnv(e.URL)
 		e.Title = r.expandEnv(e.Title)
 		e.Description = r.expandEnv(e.Description)
-		e.Image.URL = r.expandEnv(e.Image.URL)
-		e.Image.ProxyURL = r.expandEnv(e.Image.ProxyURL)
-		e.Thumbnail.URL = r.expandEnv(e.Thumbnail.URL)
-		e.Thumbnail.ProxyURL = r.expandEnv(e.Thumbnail.ProxyURL)
-		e.Footer.Text = r.expandEnv(e.Footer.Text)
-		e.Footer.IconURL = r.expandEnv(e.Footer.IconURL)
-		e.Footer.ProxyIconURL = r.expandEnv(e.Footer.ProxyIconURL)
-		e.Provider.Name = r.expandEnv(e.Provider.Name)
-		e.Provider.URL = r.expandEnv(e.Provider.URL)
-		e.Author.IconURL = r.expandEnv(e.Author.IconURL)
-		e.Author.URL = r.expandEnv(e.Author.URL)
-		e.Author.Name = r.expandEnv(e.Author.Name)
-		e.Author.ProxyIconURL = r.expandEnv(e.Author.ProxyIconURL)
+		if e.Image != nil {
+			e.Image.URL = r.expandEnv(e.Image.URL)
+			e.Image.ProxyURL = r.expandEnv(e.Image.ProxyURL)
+		}
+		if e.Thumbnail != nil {
+			e.Thumbnail.URL = r.expandEnv(e.Thumbnail.URL)
+			e.Thumbnail.ProxyURL = r.expandEnv(e.Thumbnail.ProxyURL)
+		}
+		if e.Footer != nil {
+			e.Footer.Text = r.expandEnv(e.Footer.Text)
+			e.Footer.IconURL = r.expandEnv(e.Footer.IconURL)
+			e.Footer.ProxyIconURL = r.expandEnv(e.Footer.ProxyIconURL)
+		}
+		if e.Provider != nil {
+			e.Provider.Name = r.expandEnv(e.Provider.Name)
+			e.Provider.URL = r.expandEnv(e.Provider.URL)
+		}
+		if e.Author != nil {
+			e.Author.IconURL = r.expandEnv(e.Author.IconURL)
+			e.Author.URL = r.expandEnv(e.Author.URL)
+			e.Author.Name = r.expandEnv(e.Author.Name)
+			e.Author.ProxyIconURL = r.expandEnv(e.Author.ProxyIconURL)
+		}
 		for _, f := range e.Fields {
 			f.Name = r.expandEnv(f.Name)
 			f.Value = r.expandEnv(f.Value)
