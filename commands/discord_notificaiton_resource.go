@@ -207,7 +207,7 @@ func (r *DiscordNotificationResource) expandEnv(s string) string {
 
 	return os.Expand(s, func(v string) string {
 		switch v {
-		case "BUILD_ID", "BUILD_URL", "BUILD_NAME", "BUILD_JOB_NAME", "BUILD_PIPELINE_NAME", "BUILD_TEAM_NAME", "ATC_EXTERNAL_URL":
+		case "BUILD_ID", "BUILD_NAME", "BUILD_JOB_NAME", "BUILD_PIPELINE_NAME", "BUILD_TEAM_NAME", "ATC_EXTERNAL_URL":
 			return os.Getenv(v)
 		}
 		return "$" + v
