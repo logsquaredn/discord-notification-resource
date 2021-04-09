@@ -124,13 +124,18 @@ func (r *DiscordNotificationResource) getAvatarURL(p *resource.PutParams) (strin
 
 func (r *DiscordNotificationResource) getEmbeds(p *resource.PutParams) ([]*discordgo.MessageEmbed, error) {
 	for _, e := range p.Embeds {
-		e.Author.Name = r.expandEnv(e.Author.Name)
-		e.Description = r.expandEnv(e.Description)
-		e.Title = r.expandEnv(e.Title)
+		if e.URL != "" {
+			e.URL = r.expandEnv(e.URL)
+		}
+		if e.Title != "" {
+			e.Title = r.expandEnv(e.Title)
+		}
+		if e.Description != "" {
+			e.Description = r.expandEnv(e.Description)
+		}
 	}
 
 	// ...expandEnv on:
-	// req.params.Embeds.{URL,Title,Description},
 	// req.params.Embeds.Footer.Text,
 	// req.params.Embeds.Provider.* and
 	// req.params.Embeds.Fields.{Name,Value}
