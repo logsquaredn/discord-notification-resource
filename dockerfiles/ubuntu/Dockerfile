@@ -1,4 +1,10 @@
-FROM golang:latest AS builder
+ARG base_image=ubunut:bionic
+ARG build_image=golang
+
+FROM ${base_image} as base
+FROM ${build_image} as build
+
+FROM build AS builder
 WORKDIR /src
 
 COPY go.mod .
@@ -15,7 +21,7 @@ RUN set -e; for pkg in $(go list ./...); do \
 		go test -o "/tests/$(basename $pkg).test" -c $pkg; \
 	done
 
-FROM ubuntu:bionic AS resource
+FROM base AS resource
 ENV DEBAIN_FRONTEND=noninteractive
 RUN apt-get update
 COPY --from=builder assets/ opt/resource/

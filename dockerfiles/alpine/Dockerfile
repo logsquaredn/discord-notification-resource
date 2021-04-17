@@ -1,4 +1,10 @@
-FROM golang:alpine AS builder
+ARG base_image=alpine:edge
+ARG build_image=golang
+
+FROM ${base_image} as base
+FROM ${build_image} as build
+
+FROM build AS builder
 WORKDIR /src
 
 COPY go.mod .
@@ -15,7 +21,7 @@ RUN set -e; for pkg in $(go list ./...); do \
 		go test -o "/tests/$(basename $pkg).test" -c $pkg; \
 	done
 
-FROM alpine:edge AS resource
+FROM base AS resource
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 COPY --from=builder assets/ opt/resource/
 RUN chmod +x /opt/resource/*
